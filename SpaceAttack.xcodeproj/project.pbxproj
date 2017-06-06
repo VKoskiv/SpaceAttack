@@ -14,6 +14,10 @@
 		90739BED1EE5B0290039FEE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739BEC1EE5B0290039FEE2 /* ViewController.swift */; };
 		90739BEF1EE5B0290039FEE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90739BEE1EE5B0290039FEE2 /* Assets.xcassets */; };
 		90739BF21EE5B0290039FEE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90739BF01EE5B0290039FEE2 /* Main.storyboard */; };
+		90739BFA1EE5B05C0039FEE2 /* SpaceShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739BF91EE5B05C0039FEE2 /* SpaceShip.swift */; };
+		90739BFC1EE5B0A90039FEE2 /* EnemyShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */; };
+		90739BFE1EE5B0D60039FEE2 /* EnemyDestroyed.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */; };
+		90739C011EE76A6D0039FEE2 /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739C001EE76A6D0039FEE2 /* Bullet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 		90739BEE1EE5B0290039FEE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		90739BF11EE5B0290039FEE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		90739BF31EE5B0290039FEE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90739BF91EE5B05C0039FEE2 /* SpaceShip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpaceShip.swift; sourceTree = "<group>"; };
+		90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyShip.swift; sourceTree = "<group>"; };
+		90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = EnemyDestroyed.sks; sourceTree = "<group>"; };
+		90739C001EE76A6D0039FEE2 /* Bullet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,7 @@
 		90739BE31EE5B0290039FEE2 /* SpaceAttack */ = {
 			isa = PBXGroup;
 			children = (
+				90739BFF1EE74B0D0039FEE2 /* Models */,
 				90739BE41EE5B0290039FEE2 /* AppDelegate.swift */,
 				90739BE61EE5B0290039FEE2 /* GameScene.sks */,
 				90739BE81EE5B0290039FEE2 /* Actions.sks */,
@@ -66,8 +75,19 @@
 				90739BEE1EE5B0290039FEE2 /* Assets.xcassets */,
 				90739BF01EE5B0290039FEE2 /* Main.storyboard */,
 				90739BF31EE5B0290039FEE2 /* Info.plist */,
+				90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */,
 			);
 			path = SpaceAttack;
+			sourceTree = "<group>";
+		};
+		90739BFF1EE74B0D0039FEE2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				90739BF91EE5B05C0039FEE2 /* SpaceShip.swift */,
+				90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */,
+				90739C001EE76A6D0039FEE2 /* Bullet.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,6 +152,7 @@
 			files = (
 				90739BE71EE5B0290039FEE2 /* GameScene.sks in Resources */,
 				90739BEF1EE5B0290039FEE2 /* Assets.xcassets in Resources */,
+				90739BFE1EE5B0D60039FEE2 /* EnemyDestroyed.sks in Resources */,
 				90739BE91EE5B0290039FEE2 /* Actions.sks in Resources */,
 				90739BF21EE5B0290039FEE2 /* Main.storyboard in Resources */,
 			);
@@ -144,9 +165,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90739BFC1EE5B0A90039FEE2 /* EnemyShip.swift in Sources */,
 				90739BED1EE5B0290039FEE2 /* ViewController.swift in Sources */,
 				90739BEB1EE5B0290039FEE2 /* GameScene.swift in Sources */,
+				90739BFA1EE5B05C0039FEE2 /* SpaceShip.swift in Sources */,
 				90739BE51EE5B0290039FEE2 /* AppDelegate.swift in Sources */,
+				90739C011EE76A6D0039FEE2 /* Bullet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
