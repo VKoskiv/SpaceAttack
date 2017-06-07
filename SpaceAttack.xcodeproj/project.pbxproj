@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90431D141EE7D74500EA6E8A /* Destroy.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 90431D111EE7D74500EA6E8A /* Destroy.mp3 */; };
+		90431D151EE7D74500EA6E8A /* Powerup.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 90431D121EE7D74500EA6E8A /* Powerup.mp3 */; };
+		90431D161EE7D74500EA6E8A /* Shoot.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 90431D131EE7D74500EA6E8A /* Shoot.mp3 */; };
+		90431D181EE7DA6E00EA6E8A /* PlayerDeath.wav in Resources */ = {isa = PBXBuildFile; fileRef = 90431D171EE7DA6D00EA6E8A /* PlayerDeath.wav */; };
 		90739BE51EE5B0290039FEE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739BE41EE5B0290039FEE2 /* AppDelegate.swift */; };
 		90739BE71EE5B0290039FEE2 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90739BE61EE5B0290039FEE2 /* GameScene.sks */; };
 		90739BE91EE5B0290039FEE2 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90739BE81EE5B0290039FEE2 /* Actions.sks */; };
@@ -22,6 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		90431D111EE7D74500EA6E8A /* Destroy.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Destroy.mp3; sourceTree = "<group>"; };
+		90431D121EE7D74500EA6E8A /* Powerup.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Powerup.mp3; sourceTree = "<group>"; };
+		90431D131EE7D74500EA6E8A /* Shoot.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Shoot.mp3; sourceTree = "<group>"; };
+		90431D171EE7DA6D00EA6E8A /* PlayerDeath.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PlayerDeath.wav; sourceTree = "<group>"; };
 		90739BE11EE5B0290039FEE2 /* SpaceAttack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceAttack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90739BE41EE5B0290039FEE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		90739BE61EE5B0290039FEE2 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -78,6 +86,10 @@
 				90739BF01EE5B0290039FEE2 /* Main.storyboard */,
 				90739BF31EE5B0290039FEE2 /* Info.plist */,
 				90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */,
+				90431D111EE7D74500EA6E8A /* Destroy.mp3 */,
+				90431D121EE7D74500EA6E8A /* Powerup.mp3 */,
+				90431D131EE7D74500EA6E8A /* Shoot.mp3 */,
+				90431D171EE7DA6D00EA6E8A /* PlayerDeath.wav */,
 			);
 			path = SpaceAttack;
 			sourceTree = "<group>";
@@ -156,7 +168,11 @@
 				90739BE71EE5B0290039FEE2 /* GameScene.sks in Resources */,
 				90739BEF1EE5B0290039FEE2 /* Assets.xcassets in Resources */,
 				90739BFE1EE5B0D60039FEE2 /* EnemyDestroyed.sks in Resources */,
+				90431D151EE7D74500EA6E8A /* Powerup.mp3 in Resources */,
+				90431D161EE7D74500EA6E8A /* Shoot.mp3 in Resources */,
+				90431D141EE7D74500EA6E8A /* Destroy.mp3 in Resources */,
 				90739BE91EE5B0290039FEE2 /* Actions.sks in Resources */,
+				90431D181EE7DA6E00EA6E8A /* PlayerDeath.wav in Resources */,
 				90739BF21EE5B0290039FEE2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,6 +349,7 @@
 				90739BF81EE5B0290039FEE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -8,6 +8,7 @@
 
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 private enum LayerIndex: CGFloat {
 	case background
@@ -59,6 +60,13 @@ class GameScene: SKScene {
 	let leftLimit = -640
 	let rightLimit = 640
 	
+	var hasEnded: Bool = false
+	
+	let shootSound = SKAction.playSoundFileNamed("Shoot", waitForCompletion: false)
+	let destroySound = SKAction.playSoundFileNamed("Destroy", waitForCompletion: false)
+	let levelUpSound = SKAction.playSoundFileNamed("Powerup", waitForCompletion: false)
+	let deathSound = SKAction.playSoundFileNamed("PlayerDeath", waitForCompletion: false)
+	
 	//Arrays
 	var enemyShips = [EnemyShip]()
 	var playerShips = [SpaceShip]()
@@ -80,6 +88,10 @@ class GameScene: SKScene {
 	var keys = KeyStatus()
     
     private var lastUpdateTime : TimeInterval = 0
+	
+	func playSound(soundVariable : SKAction) {
+		run(soundVariable)
+	}
 	
 	override func didMove(to view: SKView) {
 		//Game setup
@@ -199,8 +211,27 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func clearEnemies() {
+		for enemy in self.enemyShips {
+			enemy.removeFromParent()
+			if let idx = self.enemyShips.index(of: enemy) {
+				self.enemyShips.remove(at: idx)
+			}
+		}
+	}
+	
+	func clearPlayers() {
+		for player in self.playerShips {
+			player.removeFromParent()
+			if let idx = self.playerShips.index(of: player) {
+				self.playerShips.remove(at: idx)
+			}
+		}
+	}
+	
 	func nextLevel() {
 		clearBullets()
+		playSound(soundVariable: levelUpSound)
 		currentDifficulty = EnemyShip.getNextDifficulty(diff: currentDifficulty)
 		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
 		initEnemies(difficulty: currentDifficulty)
@@ -218,6 +249,13 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func resetLevel() {
+		clearBullets()
+		clearEnemies()
+		initEnemies(difficulty: currentDifficulty)
+		hasEnded = false
+	}
+	
 	func destroyEnemy(enemy: EnemyShip) {
 		if let emitter = SKEmitterNode(fileNamed: "EnemyDestroyed") {
 			emitter.position = enemy.position
@@ -231,6 +269,7 @@ class GameScene: SKScene {
 			let sequence = SKAction.sequence([addEmitterAction, wait, remove])
 			self.run(sequence)
 		}
+		playSound(soundVariable: destroySound)
 		enemy.removeFromParent()
 		if let idx = self.enemyShips.index(of: enemy) {
 			self.enemyShips.remove(at: idx)
@@ -290,6 +329,8 @@ class GameScene: SKScene {
 	}
 	
 	func shoot(player: SpaceShip) {
+		playSound(soundVariable: shootSound)
+		
 		player.lastFired = 0
 		let bullet = Bullet(shooter: player)
 		bullets.append(bullet)
@@ -357,7 +398,21 @@ class GameScene: SKScene {
 	}
 	
 	func gameOver() {
+		clearEnemies()
+		clearBullets()
+		clearPlayers()
+		player1.scoreLabel.isHidden = true
+		player1.lifeLabel.isHidden = true
+		player2.scoreLabel.isHidden = true
+		player2.lifeLabel.isHidden = true
+		levelLabel.isHidden = true
 		
+		var endLabel: SKLabelNode!
+		endLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
+		endLabel.text = "GAME OVER: WINNER IS \(player1.score > player2.score ? "Player 1! (\(player1.score))": "Player 2! (\(player2.score))")"
+		endLabel.position = CGPoint(x: 0, y: 0)
+		endLabel.horizontalAlignmentMode = .center
+		addChild(endLabel)
 	}
 	
     override func update(_ currentTime: TimeInterval) {
@@ -424,12 +479,74 @@ class GameScene: SKScene {
 					}
 				}
 			}
+			
+			if bullet.shooter.side == .left && bullet.position.x > CGFloat(rightLimit) {
+				bullet.removeFromParent()
+				if let idx = self.bullets.index(of: bullet) {
+					self.bullets.remove(at: idx)
+				}
+			}
+			if bullet.shooter.side == .right && bullet.position.x < CGFloat(leftLimit) {
+				bullet.removeFromParent()
+				if let idx = self.bullets.index(of: bullet) {
+					self.bullets.remove(at: idx)
+				}
+			}
 		}
 		
 		//Check if player is fucked
 		for enemy in enemyShips {
 			if enemy.rightEdge > player2.cannonPoint.x {
-				//TODO
+				if !hasEnded {
+					clearEnemies()
+					clearBullets()
+					player2.livesLeft -= 1
+					player2.score -= player2.deathPenalty
+					
+					if let emitter = SKEmitterNode(fileNamed: "EnemyDestroyed") {
+						emitter.position = player2.position
+						emitter.setScale(0.5)
+						emitter.zPosition = LayerIndex.extraEffects.rawValue
+						let emitterToAdd = emitter.copy() as! SKEmitterNode
+						emitterToAdd.position = player2.position
+						let addEmitterAction = SKAction.run({self.addChild(emitterToAdd)})
+						let playDeathSound = SKAction.run({self.playSound(soundVariable: self.deathSound)})
+						let resetLevel = SKAction.run({self.resetLevel()})
+						//let wait = SKAction.wait(forDuration: TimeInterval(0.2))
+						let waitLong = SKAction.wait(forDuration: TimeInterval(1))
+						let remove = SKAction.run({emitterToAdd.removeFromParent()})
+						let sequence = SKAction.sequence([addEmitterAction, playDeathSound, waitLong, remove, resetLevel])
+						self.run(sequence)
+					}
+					hasEnded = true
+				}
+			} else if enemy.leftEdge < player1.cannonPoint.x {
+				if !hasEnded {
+					clearEnemies()
+					clearBullets()
+					player1.livesLeft -= 1
+					player1.score -= player1.deathPenalty
+					
+					if let emitter = SKEmitterNode(fileNamed: "EnemyDestroyed") {
+						emitter.position = player1.position
+						emitter.setScale(0.5)
+						emitter.zPosition = LayerIndex.extraEffects.rawValue
+						let emitterToAdd = emitter.copy() as! SKEmitterNode
+						emitterToAdd.position = player1.position
+						let addEmitterAction = SKAction.run({self.addChild(emitterToAdd)})
+						let playDeathSound = SKAction.run({self.playSound(soundVariable: self.deathSound)})
+						let resetLevel = SKAction.run({self.resetLevel()})
+						//let wait = SKAction.wait(forDuration: TimeInterval(0.2))
+						let waitLong = SKAction.wait(forDuration: TimeInterval(1))
+						let remove = SKAction.run({emitterToAdd.removeFromParent()})
+						let sequence = SKAction.sequence([addEmitterAction, playDeathSound, waitLong, remove, resetLevel])
+						self.run(sequence)
+					}
+					hasEnded = true
+				}
+			}
+			if player1.livesLeft <= 0 || player2.livesLeft <= 0 {
+				gameOver()
 			}
 		}
 		
