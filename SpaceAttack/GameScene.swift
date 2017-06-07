@@ -12,10 +12,11 @@ import GameplayKit
 private enum LayerIndex: CGFloat {
 	case background
 	case stars
-	case extraEffects
 	case enemies
+	case extraEffects
 	case players
 	case projectiles
+	case labels
 	
 	var zPosition: CGFloat {
 		return self.rawValue
@@ -64,6 +65,10 @@ class GameScene: SKScene {
 	
 	//Keep track of enemy direction
 	var enemyDir: enemyVerticalDirection = .up
+	//And current difficulty
+	var currentDifficulty: EnemyShip.eDifficultyLevel = .easy
+	
+	var levelLabel: SKLabelNode!
 	
 	//Keyboard status
 	var keys = KeyStatus()
@@ -73,8 +78,16 @@ class GameScene: SKScene {
 	override func didMove(to view: SKView) {
 		//Game setup
 		self.lastUpdateTime = 0
+		
+		levelLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
+		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
+		levelLabel.position = CGPoint(x: -75, y: 350)
+		levelLabel.horizontalAlignmentMode = .left
+		levelLabel.zPosition = LayerIndex.labels.rawValue
+		addChild(levelLabel)
+		
 		initPlayers()
-		initEnemies()
+		initEnemies(difficulty: currentDifficulty)
 	}
 	
 	func initPlayers() {
@@ -83,6 +96,12 @@ class GameScene: SKScene {
 		player1.position = CGPoint(x: -470, y: 0)
 		player1.side = .left
 		playerShips.append(player1)
+		player1.scoreLabel.position = CGPoint(x: -450, y: 350)
+		player1.scoreLabel.zPosition = LayerIndex.labels.rawValue
+		player1.lifeLabel.position = CGPoint(x: -450, y: 300)
+		player1.lifeLabel.zPosition = LayerIndex.labels.rawValue
+		addChild(player1.scoreLabel)
+		addChild(player1.lifeLabel)
 		
 		self.addChild(player2)
 		player2.zPosition = LayerIndex.players.zPosition
@@ -91,6 +110,12 @@ class GameScene: SKScene {
 		player2.zRotation = 90 * .pi / 180
 		player2.side = .right
 		playerShips.append(player2)
+		player2.scoreLabel.position = CGPoint(x: 300, y: 350)
+		player2.scoreLabel.zPosition = LayerIndex.labels.rawValue
+		player2.lifeLabel.position = CGPoint(x: 300, y: 300)
+		player2.lifeLabel.zPosition = LayerIndex.labels.rawValue
+		addChild(player2.scoreLabel)
+		addChild(player2.lifeLabel)
 	}
 	
 	func newEnemyGroup(rows: Int, cols: Int, spacing: CGPoint, offset: CGPoint) -> [EnemyShip] {
@@ -107,21 +132,57 @@ class GameScene: SKScene {
 		return enemies
 	}
 	
-	func initEnemies() {
+	func initEnemies(difficulty: EnemyShip.eDifficultyLevel) {
 		let leftGroup = newEnemyGroup(rows: 12, cols: 3, spacing: CGPoint(x: -75, y: 50), offset: CGPoint(x: -75, y: 0))
 		let rightGroup = newEnemyGroup(rows: 12, cols: 3, spacing: CGPoint(x: 75, y: 50), offset: CGPoint(x: 75, y: 0))
 		leftGroup.forEach { $0.direction = .left }
 		rightGroup.forEach { $0.direction = .right }
 		let enemies = leftGroup + rightGroup
 		for enemyShip in enemies {
+			enemyShip.level = difficulty
 			enemyShip.position.y -= (12/2 - 0.5) * 50
 			addChild(enemyShip)
 			enemyShips.append(enemyShip)
 		}
 	}
 	
+	func clearBullets() {
+		for bullet in self.bullets {
+			bullet.removeFromParent()
+			if let idx = self.bullets.index(of: bullet) {
+				self.bullets.remove(at: idx)
+			}
+		}
+	}
+	
+	func nextLevel() {
+		clearBullets()
+		currentDifficulty = EnemyShip.getNextDifficulty(diff: currentDifficulty)
+		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
+		initEnemies(difficulty: currentDifficulty)
+	}
+	
 	func destroyEnemy(enemy: EnemyShip) {
-		
+		if let emitter = SKEmitterNode(fileNamed: "EnemyDestroyed") {
+			emitter.position = enemy.position
+			emitter.setScale(0.5)
+			emitter.zPosition = LayerIndex.extraEffects.rawValue
+			let emitterToAdd = emitter.copy() as! SKEmitterNode
+			emitterToAdd.position = enemy.position
+			let addEmitterAction = SKAction.run({self.addChild(emitterToAdd)})
+			let wait = SKAction.wait(forDuration: TimeInterval(1))
+			let remove = SKAction.run({emitterToAdd.removeFromParent()})
+			let sequence = SKAction.sequence([addEmitterAction, wait, remove])
+			self.run(sequence)
+		}
+		enemy.removeFromParent()
+		if let idx = self.enemyShips.index(of: enemy) {
+			self.enemyShips.remove(at: idx)
+			if self.enemyShips.count == 0 {
+				//Next level!
+				nextLevel()
+			}
+		}
 	}
 	
     override func keyDown(with event: NSEvent) {
@@ -178,11 +239,6 @@ class GameScene: SKScene {
 		bullets.append(bullet)
 		addChild(bullet)
 	}
-	
-	//var timer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(self.update), userInfo: nil, repeats: true);
-	
-	//pelaajalle boolean-muuttuja 'firing' ja timestamp 'lastFireTime'
-	//Updatessa jos (firing ja lastFireTime < now - intervalli) { ammu }
 	
 	func setControls() {
 		//Player 1
@@ -244,6 +300,10 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func gameOver() {
+		
+	}
+	
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
 		
@@ -277,9 +337,43 @@ class GameScene: SKScene {
 		//Move enemies
 		for enemyShip in self.enemyShips {
 			if enemyDir == .up {
-				enemyShip.position.y = enemyShip.position.y + 0.5
+				enemyShip.position.y = enemyShip.position.y + enemyShip.currentSpeed
 			} else if enemyDir == .down {
-				enemyShip.position.y = enemyShip.position.y - 0.5
+				enemyShip.position.y = enemyShip.position.y - enemyShip.currentSpeed
+			}
+		}
+		
+		for bullet in self.bullets {
+			for enemy in self.enemyShips {
+				if bullet.intersects(enemy) {
+					destroyEnemy(enemy: enemy)
+					
+					//Set score
+					bullet.shooter.score += enemy.scoreYield
+					
+					bullet.removeFromParent()
+					if let idx = self.bullets.index(of: bullet) {
+						self.bullets.remove(at: idx)
+					}
+				}
+			}
+			for player in self.playerShips {
+				if bullet.intersects(player) && bullet.shooter != player {
+					//Hit player
+					bullet.shooter.score += 300
+					player.score -= 300
+					bullet.removeFromParent()
+					if let idx = self.bullets.index(of: bullet) {
+						self.bullets.remove(at: idx)
+					}
+				}
+			}
+		}
+		
+		//Check if player is fucked
+		for enemy in enemyShips {
+			if enemy.rightEdge > player2.cannonPoint.x {
+				
 			}
 		}
 		

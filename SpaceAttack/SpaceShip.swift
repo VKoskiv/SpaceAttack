@@ -13,8 +13,6 @@ import GameplayKit
 class SpaceShip: SKSpriteNode {
 	var yVelocity: Float!
 	var health: Int!
-	var score: Int!
-	var livesLeft: Int!
 	var weaponType: eWeaponType!
 	var armorType: eArmorType!
 	var controlDirection: eControlDirection!
@@ -22,21 +20,48 @@ class SpaceShip: SKSpriteNode {
 	var lastFired: TimeInterval!
 	var side: playerSide = .left
 	
+	var score: Int = 0 {
+		didSet {
+			self.scoreLabel.text = "Score: \(self.score)"
+		}
+	}
+	
+	var livesLeft: Int = 3 {
+		didSet {
+			self.lifeLabel.text = "Ships left: \(self.livesLeft)"
+		}
+	}
+	
+	var scoreLabel: SKLabelNode!
+	var lifeLabel: SKLabelNode!
+	
 	let friction: Float = 20
 	let acceleration: Float = 0.40
 	let maxSpeed: Float = 5.0
+	let deathPenalty: Int = 5000 //FIXME: figure out a nicer logic for this
 	
 	convenience init() {
 		self.init(imageNamed: "Spaceship")
 		self.health = 1000
 		self.yVelocity = 0
 		self.score = 0
-		self.livesLeft = 5
+		self.livesLeft = 3
 		self.weaponType = .weaponTypeNormal
 		self.armorType = .armorTypeNormal
 		self.controlDirection = .neither
 		self.firing = false
 		self.lastFired = 0
+		
+		self.scoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
+		self.scoreLabel.text = "Score: \(self.score)"
+		self.scoreLabel.position = CGPoint(x: 0, y: 0)
+		self.scoreLabel.horizontalAlignmentMode = .left
+		
+		self.lifeLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
+		self.lifeLabel.text = "Ships left: \(self.livesLeft)"
+		self.lifeLabel.position = CGPoint(x: 0, y: 0)
+		self.lifeLabel.horizontalAlignmentMode = .left
+		
 		self.texture?.filteringMode = .nearest
 		self.setScale(5)
 		self.zRotation = -90 * .pi / 180
@@ -70,7 +95,7 @@ class SpaceShip: SKSpriteNode {
 	}
 	
 	var fireInterval: Float {
-		return 1.0 //TODO
+		return 0.5 //TODO
 	}
 	
 	var fireVelocity: Float {
