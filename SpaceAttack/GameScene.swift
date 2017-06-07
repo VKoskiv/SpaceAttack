@@ -278,6 +278,12 @@ class GameScene: SKScene {
 		// Update players
 		for playerShip in self.playerShips {
 			playerShip.update()
+			
+			if playerShip.topPoint >= CGFloat(topLimit) {
+				playerShip.yVelocity = -3
+			} else if playerShip.bottomPoint <= CGFloat(bottomLimit) {
+				playerShip.yVelocity = 3
+			}
 		}
 		
 		//Check if any enemy has collided with top/bottom
