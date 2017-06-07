@@ -12,7 +12,7 @@ import GameplayKit
 
 class Bullet: SKSpriteNode {
 	var effectiveness: Int!
-	var velocity: Float!
+	var dirSpeed: Float = 0
 	var shooter: SpaceShip!
 	
 	convenience init(shooter: SpaceShip) {
@@ -20,11 +20,12 @@ class Bullet: SKSpriteNode {
 		self.texture?.filteringMode = .nearest
 		self.setScale(5)
 		self.position = shooter.cannonPoint
+		self.shooter = shooter
 		switch shooter.side {
 		case .left:
-			self.velocity = shooter.fireVelocity
+			self.dirSpeed = shooter.fireVelocity
 		case .right:
-			self.velocity = -shooter.fireVelocity
+			self.dirSpeed = -shooter.fireVelocity
 		}
 	}
 }

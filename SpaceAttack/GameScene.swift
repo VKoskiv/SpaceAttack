@@ -173,6 +173,7 @@ class GameScene: SKScene {
 	}
 	
 	func shoot(player: SpaceShip) {
+		player.lastFired = 0
 		let bullet = Bullet(shooter: player)
 		bullets.append(bullet)
 		addChild(bullet)
@@ -180,11 +181,13 @@ class GameScene: SKScene {
 	
 	//var timer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(self.update), userInfo: nil, repeats: true);
 	
+	//pelaajalle boolean-muuttuja 'firing' ja timestamp 'lastFireTime'
+	//Updatessa jos (firing ja lastFireTime < now - intervalli) { ammu }
+	
 	func setControls() {
 		//Player 1
 		if keys.D {
 			player1.firing = true
-			Timer.scheduledTimer(timeInterval: TimeInterval(player1.fireInterval), target: self, selector: #selector(self.shoot), userInfo: nil, repeats: false)
 		} else {
 			player1.firing = false
 		}
@@ -202,7 +205,6 @@ class GameScene: SKScene {
 		//Player 2
 		if keys.left {
 			player2.firing = true
-			Timer.scheduledTimer(timeInterval: TimeInterval(player1.fireInterval), target: self, selector: #selector(self.shoot), userInfo: nil, repeats: false)
 		} else {
 			player2.firing = false
 		}
@@ -228,10 +230,25 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func handleShooting(currentTime: TimeInterval) {
+		for playerShip in self.playerShips {
+			if playerShip.lastFired == 0 {
+				playerShip.lastFired = currentTime
+			}
+			
+			let dt = currentTime - playerShip.lastFired
+			
+			if Float(dt) >= playerShip.fireInterval && playerShip.firing {
+				shoot(player: playerShip)
+			}
+		}
+	}
+	
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
 		
 		setControls()
+		handleShooting(currentTime: currentTime)
 		
 		// Update players
 		for playerShip in self.playerShips {
@@ -263,6 +280,15 @@ class GameScene: SKScene {
 				enemyShip.position.y = enemyShip.position.y + 0.5
 			} else if enemyDir == .down {
 				enemyShip.position.y = enemyShip.position.y - 0.5
+			}
+		}
+		
+		//Move bullets
+		for bullet in self.bullets {
+			if bullet.shooter.side == .left {
+				bullet.position = CGPoint(x: bullet.position.x + CGFloat(bullet.dirSpeed), y: bullet.position.y)
+			} else if bullet.shooter.side == .right {
+				bullet.position = CGPoint(x: bullet.position.x + CGFloat(bullet.dirSpeed), y: bullet.position.y)
 			}
 		}
     }

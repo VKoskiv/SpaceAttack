@@ -19,6 +19,7 @@ class SpaceShip: SKSpriteNode {
 	var armorType: eArmorType!
 	var controlDirection: eControlDirection!
 	var firing: Bool!
+	var lastFired: TimeInterval!
 	var side: playerSide = .left
 	
 	let friction: Float = 20
@@ -35,6 +36,7 @@ class SpaceShip: SKSpriteNode {
 		self.armorType = .armorTypeNormal
 		self.controlDirection = .neither
 		self.firing = false
+		self.lastFired = 0
 		self.texture?.filteringMode = .nearest
 		self.setScale(5)
 		self.zRotation = -90 * .pi / 180
