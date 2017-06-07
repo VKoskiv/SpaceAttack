@@ -112,37 +112,31 @@ class GameScene: SKScene {
 	}
 	
 	func initStars() {
-		for _ in 0...100 {
-			let star = Star()
-			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
-			star.zPosition = LayerIndex.stars0.rawValue
-			star.level = .level0
-			stars.append(star)
-			addChild(star)
-		}
-		for _ in 0...100 {
-			let star = Star()
-			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
-			star.zPosition = LayerIndex.stars1.rawValue
-			star.level = .level1
-			stars.append(star)
-			addChild(star)
-		}
-		for _ in 0...100 {
-			let star = Star()
-			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
-			star.zPosition = LayerIndex.stars2.rawValue
-			star.level = .level2
-			stars.append(star)
-			addChild(star)
-		}
-		for _ in 0...100 {
-			let star = Star()
-			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
-			star.zPosition = LayerIndex.stars3.rawValue
-			star.level = .level3
-			stars.append(star)
-			addChild(star)
+		var level: Star.starLevel = .level0
+		for i in 0...3 {
+			
+			switch i {
+			case 0:
+				level = .level0
+			case 1:
+				level = .level1
+			case 2:
+				level = .level2
+			case 3:
+				level = .level3
+			default:
+				level = .level0
+			}
+			
+			for _ in 0...100 {
+				let star = Star()
+				star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
+				star.zPosition = LayerIndex.stars0.rawValue
+				star.level = level
+				stars.append(star)
+				addChild(star)
+			}
+			
 		}
 	}
 	
