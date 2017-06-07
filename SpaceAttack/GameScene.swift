@@ -56,6 +56,7 @@ class GameScene: SKScene {
 	//Arrays
 	var enemyShips = [EnemyShip]()
 	var playerShips = [SpaceShip]()
+	var bullets = [Bullet]()
 	
 	//Players
 	var player1 = SpaceShip()
@@ -80,6 +81,7 @@ class GameScene: SKScene {
 		self.addChild(player1)
 		player1.zPosition = LayerIndex.players.zPosition
 		player1.position = CGPoint(x: -470, y: 0)
+		player1.side = .left
 		playerShips.append(player1)
 		
 		self.addChild(player2)
@@ -87,89 +89,35 @@ class GameScene: SKScene {
 		player2.position = CGPoint(x: 470, y:0)
 		//Rotate this
 		player2.zRotation = 90 * .pi / 180
+		player2.side = .right
 		playerShips.append(player2)
 	}
 	
-	//800x600
-	func initEnemies() {
-		var yPos: CGFloat = CGFloat(0)
-		var xPos: CGFloat = CGFloat(0)
-		
-		var yBank: Int = 0; //when reaches 12, inc xBank by 1
-		var xBank: Int = 0;
-		
-		//72 total, 36 either side, in 12 columns
-		for _ in 1...72 {
-			let enemy: EnemyShip = EnemyShip()
-			enemy.zPosition = LayerIndex.enemies.rawValue
-			self.addChild(enemy)
-			
-			switch xBank {
-			case 0:
-				xPos = CGFloat(-225)
-				enemy.direction = .left
-			case 1:
-				xPos = CGFloat(-150)
-				enemy.direction = .left
-			case 2:
-				xPos = CGFloat(-75)
-				enemy.direction = .left
-			case 3:
-				xPos = CGFloat(75)
-				enemy.direction = .right
-			case 4:
-				xPos = CGFloat(150)
-				enemy.direction = .right
-			case 5:
-				xPos = CGFloat(225)
-				enemy.direction = .right
-			default:
-				xPos = CGFloat(0)
-				enemy.direction = .neither
+	func newEnemyGroup(rows: Int, cols: Int, spacing: CGPoint, offset: CGPoint) -> [EnemyShip] {
+		var enemies = [EnemyShip]()
+		for y in 0..<rows {
+			for x in 0..<cols {
+				let enemy = EnemyShip()
+				enemy.zPosition = LayerIndex.enemies.rawValue
+				enemy.position.x = CGFloat(x) * spacing.x + offset.x
+				enemy.position.y = CGFloat(y) * spacing.y + offset.y
+				enemies.append(enemy)
 			}
-			
-			switch yBank {
-			case 0:
-				yPos = -300
-			case 1:
-				yPos = -250
-			case 2:
-				yPos = -200
-			case 3:
-				yPos = -150
-			case 4:
-				yPos = -100
-			case 5:
-				yPos = -50
-			case 6:
-				yPos = 0
-			case 7:
-				yPos = 50
-			case 8:
-				yPos = 100
-			case 9:
-				yPos = 150
-			case 10:
-				yPos = 200
-			case 11:
-				yPos = 250
-			default:
-				yPos = 0
-			}
-			
-			//Banks
-			yBank = yBank + 1
-			if yBank == 12 {
-				xBank = xBank + 1
-				yBank = 0
-			}
-			
-			enemy.position.y = CGFloat(yPos)
-			enemy.position.x = CGFloat(xPos)
-			
-			enemyShips.append(enemy)
 		}
-		
+		return enemies
+	}
+	
+	func initEnemies() {
+		let leftGroup = newEnemyGroup(rows: 12, cols: 3, spacing: CGPoint(x: -75, y: 50), offset: CGPoint(x: -75, y: 0))
+		let rightGroup = newEnemyGroup(rows: 12, cols: 3, spacing: CGPoint(x: 75, y: 50), offset: CGPoint(x: 75, y: 0))
+		leftGroup.forEach { $0.direction = .left }
+		rightGroup.forEach { $0.direction = .right }
+		let enemies = leftGroup + rightGroup
+		for enemyShip in enemies {
+			enemyShip.position.y -= (12/2 - 0.5) * 50
+			addChild(enemyShip)
+			enemyShips.append(enemyShip)
+		}
 	}
 	
 	func destroyEnemy(enemy: EnemyShip) {
@@ -224,10 +172,19 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func shoot(player: SpaceShip) {
+		let bullet = Bullet(shooter: player)
+		bullets.append(bullet)
+		addChild(bullet)
+	}
+	
+	//var timer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(self.update), userInfo: nil, repeats: true);
+	
 	func setControls() {
 		//Player 1
 		if keys.D {
 			player1.firing = true
+			Timer.scheduledTimer(timeInterval: TimeInterval(player1.fireInterval), target: self, selector: #selector(self.shoot), userInfo: nil, repeats: false)
 		} else {
 			player1.firing = false
 		}
@@ -245,6 +202,7 @@ class GameScene: SKScene {
 		//Player 2
 		if keys.left {
 			player2.firing = true
+			Timer.scheduledTimer(timeInterval: TimeInterval(player1.fireInterval), target: self, selector: #selector(self.shoot), userInfo: nil, repeats: false)
 		} else {
 			player2.firing = false
 		}
@@ -260,7 +218,7 @@ class GameScene: SKScene {
 		}
 	}
 	
-	func shiftEnemies(distance: Int) {
+	func shiftEnemies(distance: Double) {
 		for enemyShip in self.enemyShips {
 			if enemyShip.direction == .left {
 				enemyShip.position.x = enemyShip.position.x - CGFloat(distance)
@@ -290,28 +248,22 @@ class GameScene: SKScene {
 		for enemyShip in self.enemyShips {
 			if enemyShip.topPoint >= CGFloat(topLimit) {
 				enemyDir = .down
-				//shiftEnemies(distance: 10)
+				shiftEnemies(distance: 1)
+				break
 			} else if enemyShip.bottomPoint <= CGFloat(bottomLimit) {
 				enemyDir = .up
-				//shiftEnemies(distance: 10)
+				shiftEnemies(distance: 1)
+				break
 			}
 		}
 		
 		//Move enemies
 		for enemyShip in self.enemyShips {
 			if enemyDir == .up {
-				enemyShip.position.y = enemyShip.position.y + 1
+				enemyShip.position.y = enemyShip.position.y + 0.5
 			} else if enemyDir == .down {
-				enemyShip.position.y = enemyShip.position.y - 1
+				enemyShip.position.y = enemyShip.position.y - 0.5
 			}
 		}
-		
-		/*for enemyShip in self.enemyShips {
-			if enemyShip.direction == .left {
-				enemyShip.position.x = enemyShip.position.x - 1
-			} else if enemyShip.direction == .right {
-				enemyShip.position.x = enemyShip.position.x + 1
-			}
-		}*/
     }
 }

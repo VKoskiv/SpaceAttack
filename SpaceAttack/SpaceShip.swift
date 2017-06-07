@@ -19,6 +19,7 @@ class SpaceShip: SKSpriteNode {
 	var armorType: eArmorType!
 	var controlDirection: eControlDirection!
 	var firing: Bool!
+	var side: playerSide = .left
 	
 	let friction: Float = 20
 	let acceleration: Float = 0.40
@@ -45,6 +46,7 @@ class SpaceShip: SKSpriteNode {
 		case neither
 	}
 	
+	//TODO: More weapon types
 	enum eWeaponType {
 		case weaponTypeNormal
 		case weaponTypeFast
@@ -56,12 +58,38 @@ class SpaceShip: SKSpriteNode {
 		case armorTypeFull
 	}
 	
+	enum playerSide {
+		case left
+		case right
+	}
+	
+	var rapidFire: Bool {
+		return self.weaponType == .weaponTypeFast
+	}
+	
+	var fireInterval: Float {
+		return 1.0 //TODO
+	}
+	
+	var fireVelocity: Float {
+		return 5.0 //TODO
+	}
+	
 	var bottomPoint: CGFloat {
 		return self.position.y - self.frame.height / 2
 	}
 	
 	var topPoint: CGFloat {
 		return self.position.y + self.frame.height / 2
+	}
+	
+	var cannonPoint: CGPoint {
+		switch self.side {
+		case .left:
+			return CGPoint(x: self.position.x + self.frame.width / 2, y: self.position.y)
+		case .right:
+			return CGPoint(x: self.position.x - self.frame.width / 2, y: self.position.y)
+		}
 	}
 	
 	func update() {
