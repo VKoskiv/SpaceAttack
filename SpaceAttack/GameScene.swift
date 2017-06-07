@@ -22,14 +22,10 @@ private enum LayerIndex: CGFloat {
 	}
 }
 
-private enum controlDirection: Int {
+enum enemyVerticalDirection {
 	case up
 	case down
 	case none
-	
-	var numValue: Int {
-		return self.rawValue
-	}
 }
 
 struct KeyStatus {
@@ -51,9 +47,11 @@ class GameScene: SKScene {
 	}
 	
 	//Global constants
-	
 	let kSteerAcceleration: Float = 0.25
 	let kSteerMaxSpeed: Float = 4
+	
+	let topLimit = 380
+	let bottomLimit = -380
 	
 	//Arrays
 	var enemyShips = [EnemyShip]()
@@ -62,6 +60,9 @@ class GameScene: SKScene {
 	//Players
 	var player1 = SpaceShip()
 	var player2 = SpaceShip()
+	
+	//Keep track of enemy direction
+	var enemyDir: enemyVerticalDirection = .up
 	
 	//Keyboard status
 	var keys = KeyStatus()
@@ -105,19 +106,26 @@ class GameScene: SKScene {
 			
 			switch xBank {
 			case 0:
-				xPos = CGFloat(-250)
+				xPos = CGFloat(-225)
+				enemy.direction = .left
 			case 1:
-				xPos = CGFloat(-200)
-			case 2:
 				xPos = CGFloat(-150)
+				enemy.direction = .left
+			case 2:
+				xPos = CGFloat(-75)
+				enemy.direction = .left
+			case 3:
+				xPos = CGFloat(75)
+				enemy.direction = .right
 			case 4:
 				xPos = CGFloat(150)
+				enemy.direction = .right
 			case 5:
-				xPos = CGFloat(200)
-			case 6:
-				xPos = CGFloat(250)
+				xPos = CGFloat(225)
+				enemy.direction = .right
 			default:
 				xPos = CGFloat(0)
+				enemy.direction = .neither
 			}
 			
 			switch yBank {
@@ -252,6 +260,16 @@ class GameScene: SKScene {
 		}
 	}
 	
+	func shiftEnemies(distance: Int) {
+		for enemyShip in self.enemyShips {
+			if enemyShip.direction == .left {
+				enemyShip.position.x = enemyShip.position.x - CGFloat(distance)
+			} else if enemyShip.direction == .right {
+				enemyShip.position.x = enemyShip.position.x + CGFloat(distance)
+			}
+		}
+	}
+	
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
 		
@@ -261,5 +279,33 @@ class GameScene: SKScene {
 		for playerShip in self.playerShips {
 			playerShip.update()
 		}
+		
+		//Check if any enemy has collided with top/bottom
+		for enemyShip in self.enemyShips {
+			if enemyShip.topPoint >= CGFloat(topLimit) {
+				enemyDir = .down
+				//shiftEnemies(distance: 10)
+			} else if enemyShip.bottomPoint <= CGFloat(bottomLimit) {
+				enemyDir = .up
+				//shiftEnemies(distance: 10)
+			}
+		}
+		
+		//Move enemies
+		for enemyShip in self.enemyShips {
+			if enemyDir == .up {
+				enemyShip.position.y = enemyShip.position.y + 1
+			} else if enemyDir == .down {
+				enemyShip.position.y = enemyShip.position.y - 1
+			}
+		}
+		
+		/*for enemyShip in self.enemyShips {
+			if enemyShip.direction == .left {
+				enemyShip.position.x = enemyShip.position.x - 1
+			} else if enemyShip.direction == .right {
+				enemyShip.position.x = enemyShip.position.x + 1
+			}
+		}*/
     }
 }
