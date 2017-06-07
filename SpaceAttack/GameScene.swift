@@ -46,6 +46,10 @@ struct KeyStatus {
 
 class GameScene: SKScene {
 	
+	func randRange (lower: Int , upper: Int) -> Int {
+		return lower + Int(arc4random_uniform(UInt32(upper - lower + 1)))
+	}
+	
 	//Global constants
 	
 	let kSteerAcceleration: Float = 0.25
@@ -85,13 +89,75 @@ class GameScene: SKScene {
 		playerShips.append(player2)
 	}
 	
+	//800x600
 	func initEnemies() {
+		var yPos: CGFloat = CGFloat(0)
+		var xPos: CGFloat = CGFloat(0)
 		
-		for i in 1...10 {
+		var yBank: Int = 0; //when reaches 12, inc xBank by 1
+		var xBank: Int = 0;
+		
+		//72 total, 36 either side, in 12 columns
+		for _ in 1...72 {
 			let enemy: EnemyShip = EnemyShip()
+			enemy.zPosition = LayerIndex.enemies.rawValue
 			self.addChild(enemy)
 			
-			enemy.position.x = CGFloat(i * 10)
+			switch xBank {
+			case 0:
+				xPos = CGFloat(-250)
+			case 1:
+				xPos = CGFloat(-200)
+			case 2:
+				xPos = CGFloat(-150)
+			case 4:
+				xPos = CGFloat(150)
+			case 5:
+				xPos = CGFloat(200)
+			case 6:
+				xPos = CGFloat(250)
+			default:
+				xPos = CGFloat(0)
+			}
+			
+			switch yBank {
+			case 0:
+				yPos = -300
+			case 1:
+				yPos = -250
+			case 2:
+				yPos = -200
+			case 3:
+				yPos = -150
+			case 4:
+				yPos = -100
+			case 5:
+				yPos = -50
+			case 6:
+				yPos = 0
+			case 7:
+				yPos = 50
+			case 8:
+				yPos = 100
+			case 9:
+				yPos = 150
+			case 10:
+				yPos = 200
+			case 11:
+				yPos = 250
+			default:
+				yPos = 0
+			}
+			
+			//Banks
+			yBank = yBank + 1
+			if yBank == 12 {
+				xBank = xBank + 1
+				yBank = 0
+			}
+			
+			enemy.position.y = CGFloat(yPos)
+			enemy.position.x = CGFloat(xPos)
 			
 			enemyShips.append(enemy)
 		}
