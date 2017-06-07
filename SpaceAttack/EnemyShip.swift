@@ -73,6 +73,25 @@ class EnemyShip: SpaceShip {
 		}
 	}
 	
+	var shiftSpeed: Double {
+		switch self.level {
+		case .easy:
+			return 1.0
+		case .normal:
+			return 1.0
+		case .notbad:
+			return 2.0
+		case .oh_no:
+			return 4.0
+		case .not_good:
+			return 6.0
+		case .holy_shit:
+			return 7.0
+		case .Блядь:
+			return 8.0
+		}
+	}
+	
 	static func getNextDifficulty(diff: eDifficultyLevel) -> eDifficultyLevel {
 		switch diff {
 		case .easy:

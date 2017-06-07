@@ -11,7 +11,10 @@ import GameplayKit
 
 private enum LayerIndex: CGFloat {
 	case background
-	case stars
+	case stars0
+	case stars1
+	case stars2
+	case stars3
 	case enemies
 	case extraEffects
 	case players
@@ -53,11 +56,14 @@ class GameScene: SKScene {
 	
 	let topLimit = 380
 	let bottomLimit = -380
+	let leftLimit = -490
+	let rightLimit = 490
 	
 	//Arrays
 	var enemyShips = [EnemyShip]()
 	var playerShips = [SpaceShip]()
 	var bullets = [Bullet]()
+	var stars = [Star]()
 	
 	//Players
 	var player1 = SpaceShip()
@@ -79,6 +85,8 @@ class GameScene: SKScene {
 		//Game setup
 		self.lastUpdateTime = 0
 		
+		//self.size = view.frame.size
+		
 		levelLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
 		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
 		levelLabel.position = CGPoint(x: -75, y: 350)
@@ -87,7 +95,43 @@ class GameScene: SKScene {
 		addChild(levelLabel)
 		
 		initPlayers()
+		initStars()
 		initEnemies(difficulty: currentDifficulty)
+	}
+	
+	func initStars() {
+		for _ in 0...100 {
+			let star = Star()
+			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
+			star.zPosition = LayerIndex.stars0.rawValue
+			star.level = .level0
+			stars.append(star)
+			addChild(star)
+		}
+		for _ in 0...100 {
+			let star = Star()
+			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
+			star.zPosition = LayerIndex.stars1.rawValue
+			star.level = .level1
+			stars.append(star)
+			addChild(star)
+		}
+		for _ in 0...100 {
+			let star = Star()
+			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
+			star.zPosition = LayerIndex.stars2.rawValue
+			star.level = .level2
+			stars.append(star)
+			addChild(star)
+		}
+		for _ in 0...100 {
+			let star = Star()
+			star.position = CGPoint(x: randRange(lower: leftLimit, upper: rightLimit), y: randRange(lower: bottomLimit, upper: topLimit))
+			star.zPosition = LayerIndex.stars3.rawValue
+			star.level = .level3
+			stars.append(star)
+			addChild(star)
+		}
 	}
 	
 	func initPlayers() {
@@ -160,6 +204,18 @@ class GameScene: SKScene {
 		currentDifficulty = EnemyShip.getNextDifficulty(diff: currentDifficulty)
 		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
 		initEnemies(difficulty: currentDifficulty)
+		if currentDifficulty == .oh_no {
+			player1.fireInterval = 0.3
+			player2.fireInterval = 0.3
+			player1.fireVelocity = 8.0
+			player2.fireVelocity = 8.0
+		}
+		if currentDifficulty == .Блядь {
+			player1.fireInterval = 0.2
+			player2.fireInterval = 0.2
+			player1.fireVelocity = 10.0
+			player2.fireVelocity = 10.0
+		}
 	}
 	
 	func destroyEnemy(enemy: EnemyShip) {
@@ -325,11 +381,11 @@ class GameScene: SKScene {
 		for enemyShip in self.enemyShips {
 			if enemyShip.topPoint >= CGFloat(topLimit) {
 				enemyDir = .down
-				shiftEnemies(distance: 1)
+				shiftEnemies(distance: enemyShip.shiftSpeed)
 				break
 			} else if enemyShip.bottomPoint <= CGFloat(bottomLimit) {
 				enemyDir = .up
-				shiftEnemies(distance: 1)
+				shiftEnemies(distance: enemyShip.shiftSpeed)
 				break
 			}
 		}
@@ -373,7 +429,7 @@ class GameScene: SKScene {
 		//Check if player is fucked
 		for enemy in enemyShips {
 			if enemy.rightEdge > player2.cannonPoint.x {
-				
+				//TODO
 			}
 		}
 		
@@ -383,6 +439,14 @@ class GameScene: SKScene {
 				bullet.position = CGPoint(x: bullet.position.x + CGFloat(bullet.dirSpeed), y: bullet.position.y)
 			} else if bullet.shooter.side == .right {
 				bullet.position = CGPoint(x: bullet.position.x + CGFloat(bullet.dirSpeed), y: bullet.position.y)
+			}
+		}
+		
+		//Move stars
+		for star in self.stars {
+			star.position = CGPoint(x: star.position.x - CGFloat(star.starSpeed), y: star.position.y)
+			if star.position.x < CGFloat(leftLimit - 40) {
+				star.position.x = CGFloat(rightLimit + 40)
 			}
 		}
     }

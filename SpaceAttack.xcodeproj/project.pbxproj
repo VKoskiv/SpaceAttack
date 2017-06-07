@@ -18,6 +18,7 @@
 		90739BFC1EE5B0A90039FEE2 /* EnemyShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */; };
 		90739BFE1EE5B0D60039FEE2 /* EnemyDestroyed.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */; };
 		90739C011EE76A6D0039FEE2 /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739C001EE76A6D0039FEE2 /* Bullet.swift */; };
+		90739C031EE7C0660039FEE2 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90739C021EE7C0650039FEE2 /* Star.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyShip.swift; sourceTree = "<group>"; };
 		90739BFD1EE5B0D60039FEE2 /* EnemyDestroyed.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = EnemyDestroyed.sks; sourceTree = "<group>"; };
 		90739C001EE76A6D0039FEE2 /* Bullet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
+		90739C021EE7C0650039FEE2 /* Star.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				90739BF91EE5B05C0039FEE2 /* SpaceShip.swift */,
 				90739BFB1EE5B0A90039FEE2 /* EnemyShip.swift */,
 				90739C001EE76A6D0039FEE2 /* Bullet.swift */,
+				90739C021EE7C0650039FEE2 /* Star.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -168,6 +171,7 @@
 				90739BFC1EE5B0A90039FEE2 /* EnemyShip.swift in Sources */,
 				90739BED1EE5B0290039FEE2 /* ViewController.swift in Sources */,
 				90739BEB1EE5B0290039FEE2 /* GameScene.swift in Sources */,
+				90739C031EE7C0660039FEE2 /* Star.swift in Sources */,
 				90739BFA1EE5B05C0039FEE2 /* SpaceShip.swift in Sources */,
 				90739BE51EE5B0290039FEE2 /* AppDelegate.swift in Sources */,
 				90739C011EE76A6D0039FEE2 /* Bullet.swift in Sources */,

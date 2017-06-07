@@ -94,13 +94,9 @@ class SpaceShip: SKSpriteNode {
 		return self.weaponType == .weaponTypeFast
 	}
 	
-	var fireInterval: Float {
-		return 0.5 //TODO
-	}
+	var fireInterval: Float = 0.5
 	
-	var fireVelocity: Float {
-		return 5.0 //TODO
-	}
+	var fireVelocity: Float = 5.0
 	
 	var bottomPoint: CGFloat {
 		return self.position.y - self.frame.height / 2
