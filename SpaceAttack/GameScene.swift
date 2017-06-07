@@ -54,10 +54,10 @@ class GameScene: SKScene {
 	let kSteerAcceleration: Float = 0.25
 	let kSteerMaxSpeed: Float = 4
 	
-	let topLimit = 380
-	let bottomLimit = -380
-	let leftLimit = -490
-	let rightLimit = 490
+	let topLimit = 400
+	let bottomLimit = -400
+	let leftLimit = -640
+	let rightLimit = 640
 	
 	//Arrays
 	var enemyShips = [EnemyShip]()
@@ -89,7 +89,7 @@ class GameScene: SKScene {
 		
 		levelLabel = SKLabelNode(fontNamed: "HelveticaNeue-Light")
 		levelLabel.text = "Level: \(EnemyShip.getDifficultyText(diff: currentDifficulty))"
-		levelLabel.position = CGPoint(x: -75, y: 350)
+		levelLabel.position = CGPoint(x: -75, y: topLimit - 50)
 		levelLabel.horizontalAlignmentMode = .left
 		levelLabel.zPosition = LayerIndex.labels.rawValue
 		addChild(levelLabel)
@@ -137,26 +137,26 @@ class GameScene: SKScene {
 	func initPlayers() {
 		self.addChild(player1)
 		player1.zPosition = LayerIndex.players.zPosition
-		player1.position = CGPoint(x: -470, y: 0)
+		player1.position = CGPoint(x: leftLimit + 30, y: 0)
 		player1.side = .left
 		playerShips.append(player1)
-		player1.scoreLabel.position = CGPoint(x: -450, y: 350)
+		player1.scoreLabel.position = CGPoint(x: leftLimit + 50, y: 350)
 		player1.scoreLabel.zPosition = LayerIndex.labels.rawValue
-		player1.lifeLabel.position = CGPoint(x: -450, y: 300)
+		player1.lifeLabel.position = CGPoint(x: leftLimit + 50, y: 300)
 		player1.lifeLabel.zPosition = LayerIndex.labels.rawValue
 		addChild(player1.scoreLabel)
 		addChild(player1.lifeLabel)
 		
 		self.addChild(player2)
 		player2.zPosition = LayerIndex.players.zPosition
-		player2.position = CGPoint(x: 470, y:0)
+		player2.position = CGPoint(x: rightLimit - 30, y:0)
 		//Rotate this
 		player2.zRotation = 90 * .pi / 180
 		player2.side = .right
 		playerShips.append(player2)
-		player2.scoreLabel.position = CGPoint(x: 300, y: 350)
+		player2.scoreLabel.position = CGPoint(x: rightLimit - 200, y: 350)
 		player2.scoreLabel.zPosition = LayerIndex.labels.rawValue
-		player2.lifeLabel.position = CGPoint(x: 300, y: 300)
+		player2.lifeLabel.position = CGPoint(x: rightLimit - 200, y: 300)
 		player2.lifeLabel.zPosition = LayerIndex.labels.rawValue
 		addChild(player2.scoreLabel)
 		addChild(player2.lifeLabel)
